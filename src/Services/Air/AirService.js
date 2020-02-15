@@ -1,13 +1,11 @@
-const uApiRequest = require('../../Request/uapi-request');
-const AirParser = require('./AirParser');
-const AirValidator = require('./AirValidator');
-const getConfig = require('../../config');
-const templates = require('./templates');
+const uApiRequest = require("../../Request/uapi-request");
+const AirParser = require("./AirParser");
+const AirValidator = require("./AirValidator");
+const getConfig = require("../../config");
+const templates = require("./templates");
 
-module.exports = function (settings) {
-  const {
-    auth, debug, production, options
-  } = settings;
+module.exports = function(settings) {
+  const { auth, debug, production, options, AuthorizationKey } = settings;
   const config = getConfig(auth.region, production);
 
   return {
@@ -15,67 +13,73 @@ module.exports = function (settings) {
       config.AirService.url,
       auth,
       templates.lowFareSearch,
-      'air:LowFareSearchRsp',
+      "air:LowFareSearchRsp",
       AirValidator.AIR_LOW_FARE_SEARCH_REQUEST,
       AirParser.AIR_ERRORS,
       AirParser.AIR_LOW_FARE_SEARCH_REQUEST,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     searchLowFaresAsync: uApiRequest(
       config.AirService.url,
       auth,
       templates.lowFareSearch,
-      'air:LowFareSearchAsynchRsp',
+      "air:LowFareSearchAsynchRsp",
       AirValidator.AIR_LOW_FARE_SEARCH_REQUEST,
       AirParser.AIR_ERRORS,
       AirParser.AIR_LOW_FARE_SEARCH_REQUEST,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     searchLowFaresRetrieve: uApiRequest(
       config.AirService.url,
       auth,
       templates.retrieveLowFareSearch,
-      'air:RetrieveLowFareSearchRsp',
+      "air:RetrieveLowFareSearchRsp",
       AirValidator.AIR_RETRIEVE_LOW_FARE_SEARCH_REQUEST,
       AirParser.AIR_ERRORS,
       AirParser.AIR_LOW_FARE_SEARCH_REQUEST,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     availability: uApiRequest(
       config.AirService.url,
       auth,
       templates.availability,
-      'air:AvailabilitySearchRsp',
+      "air:AvailabilitySearchRsp",
       AirValidator.AIR_LOW_FARE_SEARCH_REQUEST,
       AirParser.AIR_ERRORS,
       AirParser.AIR_AVAILABILITY,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     airPrice: uApiRequest(
       config.AirService.url,
       auth,
       templates.price,
-      'air:AirPriceRsp',
+      "air:AirPriceRsp",
       AirValidator.AIR_PRICE_REQUEST,
       AirParser.AIR_ERRORS,
       AirParser.AIR_PRICE_REQUEST,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     lookupFareRules: uApiRequest(
       config.AirService.url,
       auth,
       templates.price,
-      'air:AirPriceRsp',
+      "air:AirPriceRsp",
       AirValidator.AIR_PRICE_FARE_RULES_REQUEST,
       AirParser.AIR_ERRORS,
       AirParser.AIR_PRICE_FARE_RULES_REQUEST,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     airPricePricingSolutionXML: uApiRequest(
       config.AirService.url,
@@ -86,73 +90,80 @@ module.exports = function (settings) {
       AirParser.AIR_ERRORS,
       AirParser.AIR_PRICE_REQUEST_PRICING_SOLUTION_XML,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     createReservation: uApiRequest(
       config.AirService.url,
       auth,
       templates.createReservation,
-      'universal:AirCreateReservationRsp',
+      "universal:AirCreateReservationRsp",
       AirValidator.AIR_CREATE_RESERVATION_REQUEST,
       AirParser.AIR_ERRORS,
       AirParser.AIR_CREATE_RESERVATION_REQUEST,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     ticket: uApiRequest(
       config.AirService.url,
       auth,
       templates.ticket,
-      'air:AirTicketingRsp',
+      "air:AirTicketingRsp",
       AirValidator.AIR_TICKET, // checks for PNR
       AirParser.AIR_ERRORS,
       AirParser.AIR_TICKET_REQUEST,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     getUniversalRecordByPNR: uApiRequest(
       config.UniversalRecord.url,
       auth,
       templates.universalRecordImport,
-      'universal:UniversalRecordImportRsp',
+      "universal:UniversalRecordImportRsp",
       AirValidator.AIR_REQUEST_BY_PNR, // checks for PNR
       AirParser.AIR_ERRORS,
       AirParser.AIR_IMPORT_REQUEST,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     getUniversalRecord: uApiRequest(
       config.UniversalRecord.url,
       auth,
       templates.universalRecordRetrieve,
-      'universal:UniversalRecordRetrieveRsp',
+      "universal:UniversalRecordRetrieveRsp",
       AirValidator.UNIVERSAL_RECORD_RETRIEVE,
       AirParser.AIR_ERRORS,
       AirParser.UNIVERSAL_RECORD_RETRIEVE_REQUEST,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     gdsQueue: uApiRequest(
       config.GdsQueueService.url,
       auth,
       templates.gdsQueuePlace,
-      'gdsQueue:GdsQueuePlaceRsp', // TODO rewrite into uAPI parser
+      "gdsQueue:GdsQueuePlaceRsp", // TODO rewrite into uAPI parser
       AirValidator.GDS_QUEUE_PLACE,
       AirParser.AIR_ERRORS,
       AirParser.GDS_QUEUE_PLACE_RESPONSE,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     foid: uApiRequest(
       config.UniversalRecord.url,
       auth,
       templates.universalRecordFoid,
-      'universal:UniversalRecordModifyRsp',
+      "universal:UniversalRecordModifyRsp",
       AirValidator.UNIVERSAL_RECORD_FOID,
       AirParser.AIR_ERRORS,
       AirParser.UNIVERSAL_RECORD_FOID,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     cancelUR: uApiRequest(
       config.UniversalRecord.url,
@@ -163,62 +174,68 @@ module.exports = function (settings) {
       AirParser.AIR_ERRORS,
       AirParser.AIR_CANCEL_UR,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     flightInfo: uApiRequest(
       config.FlightService.url,
       auth,
       templates.flightInformation,
-      'air:FlightInformationRsp',
+      "air:FlightInformationRsp",
       AirValidator.AIR_FLIGHT_INFORMATION,
       AirParser.AIR_ERRORS,
       AirParser.AIR_FLIGHT_INFORMATION,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     getTicket: uApiRequest(
       config.AirService.url,
       auth,
       templates.retrieveDocument,
-      'air:AirRetrieveDocumentRsp',
+      "air:AirRetrieveDocumentRsp",
       AirValidator.AIR_GET_TICKET,
       AirParser.AIR_ERRORS,
       AirParser.AIR_GET_TICKET,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     getTickets: uApiRequest(
       config.AirService.url,
       auth,
       templates.retrieveDocument,
-      'air:AirRetrieveDocumentRsp',
+      "air:AirRetrieveDocumentRsp",
       AirValidator.AIR_GET_TICKETS,
       AirParser.AIR_GET_TICKETS_ERROR_HANDLER,
       AirParser.AIR_GET_TICKETS,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     cancelTicket: uApiRequest(
       config.AirService.url,
       auth,
       templates.voidDocument,
-      'air:AirVoidDocumentRsp',
+      "air:AirVoidDocumentRsp",
       AirValidator.AIR_CANCEL_TICKET,
       AirParser.AIR_ERRORS,
       AirParser.AIR_CANCEL_TICKET,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
     cancelPNR: uApiRequest(
       config.AirService.url,
       auth,
       templates.cancel,
-      'universal:AirCancelRsp',
+      "universal:AirCancelRsp",
       AirValidator.AIR_CANCEL_PNR,
       AirParser.AIR_ERRORS,
       AirParser.AIR_CANCEL_PNR,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
 
     exchangeQuote: uApiRequest(
@@ -230,19 +247,21 @@ module.exports = function (settings) {
       AirParser.AIR_ERRORS,
       AirParser.AIR_EXCHANGE_QUOTE,
       debug,
-      options
+      options,
+      AuthorizationKey
     ),
 
     exchangeBooking: uApiRequest(
       config.AirService.url,
       auth,
       templates.exchange,
-      'air:AirExchangeRsp',
+      "air:AirExchangeRsp",
       AirValidator.AIR_EXCHANGE,
       AirParser.AIR_ERRORS,
       AirParser.AIR_EXCHANGE,
       debug,
-      options
-    ),
+      options,
+      AuthorizationKey
+    )
   };
 };

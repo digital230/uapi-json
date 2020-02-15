@@ -1,17 +1,17 @@
-const handlebars = require('handlebars');
-const axios = require('axios');
-const { pd } = require('pretty-data');
+const handlebars = require("handlebars");
+const axios = require("axios");
+const { pd } = require("pretty-data");
 const {
   RequestValidationError,
   RequestRuntimeError,
-  RequestSoapError,
-} = require('./RequestErrors');
-const Parser = require('./uapi-parser');
-const errorsConfig = require('./errors-config');
-const prepareRequest = require('./prepare-request');
-const configInit = require('../config');
+  RequestSoapError
+} = require("./RequestErrors");
+const Parser = require("./uapi-parser");
+const errorsConfig = require("./errors-config");
+const prepareRequest = require("./prepare-request");
+const configInit = require("../config");
 
-handlebars.registerHelper('equal', require('handlebars-helper-equal'));
+handlebars.registerHelper("equal", require("handlebars-helper-equal"));
 
 /**
  * basic function for requests/responses
@@ -35,11 +35,12 @@ module.exports = function uapiRequest(
   errorHandler,
   parseFunction,
   debugMode = false,
-  options = {}
+  options = {},
+  AuthorizationKey = ""
 ) {
   // Assign default value
-  auth.provider = auth.provider || '1G';
-  auth.region = auth.region || 'emea';
+  auth.provider = auth.provider || "1G";
+  auth.region = auth.region || "emea";
 
   const config = configInit(auth.region);
   const log = options.logFunction || console.log;
@@ -54,58 +55,63 @@ module.exports = function uapiRequest(
   if (reqType === undefined) {
     throw new RequestValidationError.RequestTypeUndefined();
   }
-  if (Object.prototype.toString.call(reqType) !== '[object String]') {
+  if (Object.prototype.toString.call(reqType) !== "[object String]") {
     throw new RequestRuntimeError.TemplateFileMissing();
   }
 
   return function serviceFunc(params) {
     if (debugMode) {
-      log('Input params ', pd.json(params));
+      log("Input params ", pd.json(params));
     }
 
     // create a v47 uAPI parser with default params and request data in env
-    const uParser = new Parser(rootObject, 'v47_0', params, debugMode, null, auth.provider);
+    const uParser = new Parser(
+      rootObject,
+      "v47_0",
+      params,
+      debugMode,
+      null,
+      auth.provider
+    );
 
-    const validateInput = () => (
+    const validateInput = () =>
       Promise.resolve(params)
         .then(validateFunction)
-        .then((validatedParams) => {
+        .then(validatedParams => {
           params = validatedParams;
           uParser.env = validatedParams;
           return reqType;
-        }));
+        });
 
-    const sendRequest = function (xml) {
+    const sendRequest = function(xml) {
       if (debugMode) {
-        log('Request URL: ', service);
-        log('Request XML: ', pd.xml(xml));
+        log("Request URL: ", service);
+        log("Request XML: ", pd.xml(xml));
       }
-      return axios.request({
-        url: service,
-        method: 'POST',
-        timeout: config.timeout || 5000,
-        auth: {
-          username: auth.username,
-          password: auth.password,
-        },
-        headers: {
-          'Accept-Encoding': 'gzip',
-          'Content-Type': 'text/xml',
-        },
-        data: xml,
-      })
-        .then((response) => {
+      return axios
+        .request({
+          url: service,
+          method: "POST",
+          timeout: config.timeout || 5000,
+          headers: {
+            "Authorization": AuthorizationKey
+            "Accept-Encoding": "gzip",
+            "Content-Type": "text/xml"
+          },
+          data: xml
+        })
+        .then(response => {
           if (debugMode) {
-            log('Response SOAP: ', pd.xml(response.data));
+            log("Response SOAP: ", pd.xml(response.data));
           }
           return response.data;
         })
-        .catch((e) => {
+        .catch(e => {
           const rsp = e.response;
 
           if (!rsp) {
             if (debugMode) {
-              log('Unexpected Error: ', pd.json(e));
+              log("Unexpected Error: ", pd.json(e));
             }
 
             return Promise.reject(new RequestSoapError.SoapUnexpectedError(e));
@@ -113,18 +119,18 @@ module.exports = function uapiRequest(
 
           const error = {
             status: rsp.status,
-            data: rsp.data,
+            data: rsp.data
           };
 
           if (debugMode) {
-            log('Error Response SOAP: ', pd.json(error));
+            log("Error Response SOAP: ", pd.json(error));
           }
 
           return Promise.reject(new RequestSoapError.SoapRequestError(error));
         });
     };
 
-    const parseResponse = function (response) {
+    const parseResponse = function(response) {
       // if there are web server or HTTP auth errors, uAPI returns a JSON
       let data = null;
       try {
@@ -137,10 +143,10 @@ module.exports = function uapiRequest(
       return Promise.reject(new RequestSoapError.SoapServerError(data));
     };
 
-    const validateSOAP = function (parsedXML) {
-      if (parsedXML['SOAP:Fault']) {
+    const validateSOAP = function(parsedXML) {
+      if (parsedXML["SOAP:Fault"]) {
         if (debugMode > 2) {
-          log('Parsed error response', pd.json(parsedXML));
+          log("Parsed error response", pd.json(parsedXML));
         }
         // use a special uAPI parser configuration for errors, copy detected uAPI version
         const errParserConfig = errorsConfig();
@@ -152,28 +158,29 @@ module.exports = function uapiRequest(
           errParserConfig,
           auth.provider
         );
-        const errData = errParser.mergeLeafRecursive(parsedXML['SOAP:Fault'][0]); // parse error data
+        const errData = errParser.mergeLeafRecursive(
+          parsedXML["SOAP:Fault"][0]
+        ); // parse error data
         return errorHandler.call(errParser, errData);
       }
 
       if (debugMode > 2) {
-        log('Parsed response', pd.json(parsedXML));
+        log("Parsed response", pd.json(parsedXML));
       }
 
       return parsedXML;
     };
 
-    const handleSuccess = function (result) {
+    const handleSuccess = function(result) {
       if (debugMode > 1) {
-        if (typeof result === 'string') {
-          log('Returning result', result);
+        if (typeof result === "string") {
+          log("Returning result", result);
         } else {
-          log('Returning result', pd.json(result));
+          log("Returning result", pd.json(result));
         }
       }
       return result;
     };
-
 
     return validateInput()
       .then(handlebars.compile)
