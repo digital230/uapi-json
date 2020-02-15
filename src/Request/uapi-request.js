@@ -94,7 +94,7 @@ module.exports = function uapiRequest(
           method: "POST",
           timeout: config.timeout || 5000,
           headers: {
-            "Authorization": AuthorizationKey
+            "Authorization": `Basic ${AuthorizationKey}`
             "Accept-Encoding": "gzip",
             "Content-Type": "text/xml"
           },
