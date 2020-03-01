@@ -1,22 +1,15 @@
-const { validate, transform, compose } = require('../../utils');
-const validators = require('./validators');
-const transformers = require('./transformers');
+const { validate, transform, compose } = require("../../utils");
+const validators = require("./validators");
+const transformers = require("./transformers");
 
 module.exports = {
   AIR_LOW_FARE_SEARCH_REQUEST: compose(
-    validate(
-      validators.passengers,
-      validators.legs
-    ),
-    transform(
-      transformers.convertPassengersObjectToArray
-    )
+    validate(validators.passengers, validators.legs),
+    transform(transformers.convertPassengersObjectToArray)
   ),
 
   AIR_RETRIEVE_LOW_FARE_SEARCH_REQUEST: compose(
-    validate(
-      validators.searchId
-    ),
+    validate(validators.searchId),
     transform()
   ),
 
@@ -41,7 +34,7 @@ module.exports = {
       validators.platingCarrier
     ),
     transform(
-      transformers.setBusinessFlag,
+      // transformers.setBusinessFlag,
       transformers.convertPassengersObjectToArray,
       transformers.setGroupsForSegments,
       transformers.setHasFareBasisFlag
@@ -49,10 +42,7 @@ module.exports = {
   ),
 
   AIR_PRICE: compose(
-    validate(
-      validators.segments,
-      validators.platingCarrier
-    ),
+    validate(validators.segments, validators.platingCarrier),
     transform(
       transformers.setBusinessFlag,
       transformers.setPassengersAge,
@@ -82,31 +72,21 @@ module.exports = {
       validators.fopCreditCard,
       validators.pnr
     ),
-    transform(
-      transformers.fixCardFop
-    )
+    transform(transformers.fixCardFop)
   ),
 
   AIR_REQUEST_BY_PNR: compose(
-    validate(
-      validators.pnr
-    ),
+    validate(validators.pnr),
     transform()
   ),
 
   GDS_QUEUE_PLACE: compose(
-    validate(
-      validators.pnr,
-      validators.pcc,
-      validators.queue
-    ),
+    validate(validators.pnr, validators.pcc, validators.queue),
     transform()
   ),
 
   UNIVERSAL_RECORD_RETRIEVE: compose(
-    validate(
-      validators.universalRecordLocator
-    ),
+    validate(validators.universalRecordLocator),
     transform()
   ),
 
@@ -114,25 +94,17 @@ module.exports = {
   UNIVERSAL_RECORD_FOID: params => params,
 
   AIR_FLIGHT_INFORMATION: compose(
-    validate(
-      validators.flightInfo
-    ),
+    validate(validators.flightInfo),
     transform()
   ),
 
   AIR_GET_TICKET: compose(
-    validate(
-      validators.paramsIsObject,
-      validators.ticketNumber
-    ),
+    validate(validators.paramsIsObject, validators.ticketNumber),
     transform()
   ),
 
   AIR_GET_TICKETS: compose(
-    validate(
-      validators.paramsIsObject,
-      validators.reservationLocator
-    ),
+    validate(validators.paramsIsObject, validators.reservationLocator),
     transform()
   ),
 
@@ -146,18 +118,12 @@ module.exports = {
   ),
 
   AIR_CANCEL_PNR: compose(
-    validate(
-      validators.paramsIsObject,
-      validators.pnr
-    ),
+    validate(validators.paramsIsObject, validators.pnr),
     transform()
   ),
 
   AIR_EXCHANGE_QUOTE: compose(
-    validate(
-      validators.segments,
-      validators.pnr
-    ),
+    validate(validators.segments, validators.pnr),
     transform()
   ),
 
@@ -167,8 +133,6 @@ module.exports = {
       validators.reservationLocator,
       validators.exchangeToken
     ),
-    transform(
-      transformers.decodeExchangeToken
-    )
-  ),
+    transform(transformers.decodeExchangeToken)
+  )
 };

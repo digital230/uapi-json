@@ -67,23 +67,26 @@ module.exports = function uapiRequest(
     // create a v47 uAPI parser with default params and request data in env
     const uParser = new Parser(
       rootObject,
-      "v47_0",
+      "v49_0",
       params,
       debugMode,
       null,
       auth.provider
     );
+    // console.log("uParser", uParser);
 
     const validateInput = () =>
       Promise.resolve(params)
         .then(validateFunction)
         .then(validatedParams => {
+          // console.log("validatedParams", validatedParams);
           params = validatedParams;
           uParser.env = validatedParams;
           return reqType;
         });
 
     const sendRequest = function(xml) {
+      // console.log(xml);
       if (debugMode) {
         log("Request URL: ", service);
         log("Request XML: ", pd.xml(xml));
@@ -101,6 +104,7 @@ module.exports = function uapiRequest(
           data: xml
         })
         .then(response => {
+          // console.log(pd.xml(response.data));
           if (debugMode) {
             log("Response SOAP: ", pd.xml(response.data));
           }
@@ -167,11 +171,12 @@ module.exports = function uapiRequest(
       if (debugMode > 2) {
         log("Parsed response", pd.json(parsedXML));
       }
-
+      // console.log("parsedXML", parsedXML);
       return parsedXML;
     };
 
     const handleSuccess = function(result) {
+      console.log(result);
       if (debugMode > 1) {
         if (typeof result === "string") {
           log("Returning result", result);
