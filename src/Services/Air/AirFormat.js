@@ -295,7 +295,7 @@ function formatFarePricingInfo(fare) {
 }
 
 function formatLowFaresSearch(searchRequest, searchResult) {
-  // console.log("searchRequest", searchRequest);
+  console.log("searchRequest", searchRequest);
   const pricesList = searchResult["air:AirPricePointList"];
   const solutionsList = searchResult["air:AirPricingSolution"];
   const fareInfos = searchResult["air:FareInfoList"];
@@ -333,11 +333,11 @@ function formatLowFaresSearch(searchRequest, searchResult) {
       directions = price["air:Journey"].map(leg => {
         const trips = leg["air:AirSegmentRef"].map(segmentRef => {
           const segment = segments[segmentRef];
-          // console.log('segment',segment);
 
           const tripFlightDetails = segment["air:FlightDetailsRef"].map(
             flightDetailsRef => flightDetails[flightDetailsRef]
           );
+          // console.log("segment", tripFlightDetails);
 
           const [bookingInfo] = thisFare["air:BookingInfo"].filter(
             info => info.SegmentRef === segmentRef
@@ -417,7 +417,10 @@ function formatLowFaresSearch(searchRequest, searchResult) {
       price["air:AirPricingInfo"]
     );
 
+    console.log(fareKey);
+
     const result = {
+      uid: fareKey,
       totalPrice: price.TotalPrice,
       basePrice: price.BasePrice,
       taxes: price.Taxes,

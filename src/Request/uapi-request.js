@@ -104,7 +104,7 @@ module.exports = function uapiRequest(
           data: xml
         })
         .then(response => {
-          // console.log(pd.xml(response.data));
+          // console.log(pd.xml("response", response.data));
           if (debugMode) {
             log("Response SOAP: ", pd.xml(response.data));
           }
@@ -176,7 +176,7 @@ module.exports = function uapiRequest(
     };
 
     const handleSuccess = function(result) {
-      console.log(result);
+      // console.log(result);
       if (debugMode > 1) {
         if (typeof result === "string") {
           log("Returning result", result);

@@ -14,6 +14,7 @@ module.exports = settings => {
   const log = (settings.options && settings.options.logFunction) || console.log;
   return {
     shop(options) {
+      console.log(options);
       if (options.async === true) {
         return service.searchLowFaresAsync(options);
       }
