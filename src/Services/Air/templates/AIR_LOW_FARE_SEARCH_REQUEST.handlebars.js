@@ -92,11 +92,11 @@ module.exports = `
                     <com:Provider Code="{{provider}}" xmlns:com="http://www.travelport.com/schema/common_v49_0"/>
                 </air:PreferredProviders>
                 {{#if carriers}}
-                <air:PermittedCabins>
+                <air:PermittedCarriers>
                     {{#carriers}}
                         <com:Carrier Code="{{.}}" xmlns:com="http://www.travelport.com/schema/common_v49_0"/>
                     {{/carriers}}
-                </air:PermittedCabins>
+                </air:PermittedCarriers>
                 {{/if}}
 
             </air:AirSearchModifiers>
